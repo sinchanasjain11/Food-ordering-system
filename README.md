@@ -1,5 +1,6 @@
 # Smart Food - Food Ordering Web Application
-
+CLONE THIS PROJECT FROM 
+www,github.com/sinchanasjain11/Food-Ordering-System
 A production-ready food ordering web application built with Python Flask and SQLite, featuring customer ordering, restaurant management, and admin controls.
 
 ## 🌟 Features
