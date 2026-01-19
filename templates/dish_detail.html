@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}{{ dish.name }} - Smart Food{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dish-detail">
+        <div class="dish-image-container">
+            <img src="{{ url_for('static', filename='img/dishes/' + dish.image_path) }}" 
+                 alt="{{ dish.name }}" class="dish-detail-image">
+        </div>
+        
+        <div class="dish-detail-info">
+            <div class="dish-header">
+                <h1>{{ dish.name }}</h1>
+                <span class="dish-type {{ 'veg' if dish.is_veg else 'non-veg' }}">
+                    {{ '🟢 Vegetarian' if dish.is_veg else '🔴 Non-Vegetarian' }}
+                </span>
+            </div>
+            
+            <p class="restaurant-name">by {{ dish.owner.restaurant_name }}</p>
+            <p class="dish-description">{{ dish.description }}</p>
+            
+            <div class="dish-meta">
+                <div class="price-info">
+                    <span class="price-label">Price:</span>
+                    <span class="dish-price">₹{{ "%.2f"|format(dish.price) }}</span>
+                </div>
+                <div class="stock-info">
+                    <span class="stock-label">Available:</span>
+                    <span class="stock-count">{{ dish.stock }} items</span>
+                </div>
+            </div>
+            
+            {% if current_user.is_authenticated and session.get('user_type') == 'customer' %}
+                {% if dish.stock > 0 %}
+                    <div class="quantity-selector">
+                        <label for="quantity">Quantity:</label>
+                        <div class="quantity-controls">
+                            <button onclick="decreaseQuantity()" class="quantity-btn">-</button>
+                            <input type="number" id="quantity" value="1" min="1" max="{{ dish.stock }}" class="quantity-input">
+                            <button onclick="increaseQuantity()" class="quantity-btn">+</button>
+                        </div>
+                    </div>
+                    
+                    <div class="dish-actions">
+                        <button onclick="addToCartWithQuantity({{ dish.id }})" class="btn btn-primary btn-large">
+                            Add to Cart
+                        </button>
+                    </div>
+                {% else %}
+                    <div class="out-of-stock">
+                        <p>This item is currently out of stock.</p>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="login-prompt">
+                    <p>Please <a href="{{ url_for('auth.customer_login') }}">login</a> to add items to cart.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="back-to-menu">
+        <a href="{{ url_for('menu') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Menu
+        </a>
+    </div>
+</div>
+
+<script>
+function increaseQuantity() {
+    const input = document.getElementById('quantity');
+    const max = parseInt(input.getAttribute('max'));
+    if (parseInt(input.value) < max) {
+        input.value = parseInt(input.value) + 1;
+    }
+}
+
+function decreaseQuantity() {
+    const input = document.getElementById('quantity');
+    if (parseInt(input.value) > 1) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+
+function addToCartWithQuantity(dishId) {
+    const quantity = parseInt(document.getElementById('quantity').value);
+    addToCart(dishId, quantity);
+}
+</script>
+{% endblock %}

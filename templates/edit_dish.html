@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Dish - Smart Food{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h1>Edit Dish</h1>
+        
+        <form method="POST" enctype="multipart/form-data" class="dish-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Dish Name:</label>
+                    <input type="text" id="name" name="name" value="{{ dish.name }}" required class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="price">Price (₹):</label>
+                    <input type="number" id="price" name="price" step="0.01" min="0" value="{{ dish.price }}" required class="form-input">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="stock">Stock Quantity:</label>
+                    <input type="number" id="stock" name="stock" min="0" value="{{ dish.stock }}" required class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="image">Update Image (optional):</label>
+                    <input type="file" id="image" name="image" accept="image/*" class="form-input">
+                    <small>Current image: {{ dish.image_path }}</small>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" required class="form-textarea" rows="4">{{ dish.description }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="is_veg" {{ 'checked' if dish.is_veg else '' }}>
+                    <span class="checkmark"></span>
+                    Vegetarian Dish
+                </label>
+            </div>
+            
+            <div class="form-actions">
+                <a href="{{ url_for('owner.dashboard') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Update Dish</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

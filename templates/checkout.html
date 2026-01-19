@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout - Smart Food{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Checkout</h1>
+    
+    <div class="checkout-container">
+        <div class="order-summary">
+            <h2>Order Summary</h2>
+            
+            <div class="checkout-items">
+                {% for item in cart_data %}
+                <div class="checkout-item">
+                    <img src="{{ url_for('static', filename='img/dishes/' + item.dish.image_path) }}" 
+                         alt="{{ item.dish.name }}" class="checkout-item-image">
+                    
+                    <div class="checkout-item-info">
+                        <h4>{{ item.dish.name }}</h4>
+                        <p class="restaurant-name">by {{ item.dish.owner.restaurant_name }}</p>
+                        <span class="dish-type {{ 'veg' if item.dish.is_veg else 'non-veg' }}">
+                            {{ '🟢 Veg' if item.dish.is_veg else '🔴 Non-Veg' }}
+                        </span>
+                    </div>
+                    
+                    <div class="checkout-item-details">
+                        <span class="quantity">Qty: {{ item.quantity }}</span>
+                        <span class="price">₹{{ "%.2f"|format(item.dish.price) }} each</span>
+                        <span class="subtotal">₹{{ "%.2f"|format(item.subtotal) }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="checkout-total">
+                <h3>Total Amount: ₹{{ "%.2f"|format(total) }}</h3>
+            </div>
+        </div>
+        
+        <div class="checkout-form">
+            <h2>Delivery Information</h2>
+            
+            <form method="POST" class="delivery-form">
+                <div class="form-group">
+                    <label for="customer-name">Customer Name:</label>
+                    <input type="text" id="customer-name" value="{{ current_user.name }}" readonly class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="customer-email">Email:</label>
+                    <input type="email" id="customer-email" value="{{ current_user.email }}" readonly class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="delivery-address">Delivery Address:</label>
+                    <textarea id="delivery-address" name="delivery_address" required class="form-textarea" 
+                              placeholder="Enter your complete delivery address"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number:</label>
+                    <input type="tel" id="phone" name="phone" required class="form-input" 
+                           placeholder="Enter your phone number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="special-instructions">Special Instructions (Optional):</label>
+                    <textarea id="special-instructions" name="special_instructions" class="form-textarea" 
+                              placeholder="Any special instructions for delivery"></textarea>
+                </div>
+                
+                <div class="checkout-actions">
+                    <a href="{{ url_for('customer.cart') }}" class="btn btn-secondary">Back to Cart</a>
+                    <button type="submit" class="btn btn-primary btn-large">Place Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

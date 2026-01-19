@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Smart Food{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <div class="admin-actions">
+            <a href="{{ url_for('admin.logout') }}" class="btn btn-secondary">Logout</a>
+        </div>
+    </div>
+    
+    <div class="dashboard-tabs">
+        <button class="tab-btn active" onclick="showTab('pending-owners')">Pending Approvals</button>
+        <button class="tab-btn" onclick="showTab('approved-owners')">Approved Owners</button>
+        <button class="tab-btn" onclick="showTab('all-dishes')">All Dishes</button>
+        <button class="tab-btn" onclick="showTab('all-orders')">All Orders</button>
+    </div>
+    
+    <!-- Pending Owners Tab -->
+    <div id="pending-owners-tab" class="tab-content active">
+        <div class="section-header">
+            <h2>Pending Owner Approvals</h2>
+        </div>
+        
+        {% if pending_owners %}
+            <div class="owners-list">
+                {% for owner in pending_owners %}
+                <div class="owner-card">
+                    <div class="owner-info">
+                        <h3>{{ owner.name }}</h3>
+                        <p><strong>Restaurant:</strong> {{ owner.restaurant_name }}</p>
+                        <p><strong>Email:</strong> {{ owner.email }}</p>
+                        <p><strong>Registered:</strong> {{ owner.created_at.strftime('%B %d, %Y') }}</p>
+                    </div>
+                    <div class="owner-actions">
+                        <form method="POST" action="{{ url_for('admin.approve_owner', owner_id=owner.id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-success">Approve</button>
+                        </form>
+                        <form method="POST" action="{{ url_for('admin.delete_owner', owner_id=owner.id) }}" 
+                              style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this owner?')">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-data">
+                <p>No pending owner approvals.</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Approved Owners Tab -->
+    <div id="approved-owners-tab" class="tab-content">
+        <div class="section-header">
+            <h2>Approved Restaurant Owners</h2>
+        </div>
+        
+        {% if approved_owners %}
+            <div class="owners-list">
+                {% for owner in approved_owners %}
+                <div class="owner-card">
+                    <div class="owner-info">
+                        <h3>{{ owner.name }}</h3>
+                        <p><strong>Restaurant:</strong> {{ owner.restaurant_name }}</p>
+                        <p><strong>Email:</strong> {{ owner.email }}</p>
+                        <p><strong>Dishes:</strong> {{ owner.dishes|length }}</p>
+                        <p><strong>Approved:</strong> {{ owner.created_at.strftime('%B %d, %Y') }}</p>
+                    </div>
+                    <div class="owner-actions">
+                        <form method="POST" action="{{ url_for('admin.delete_owner', owner_id=owner.id) }}" 
+                              style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this owner and all their dishes?')">
+                            <button type="submit" class="btn btn-danger">Delete Owner</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-data">
+                <p>No approved owners yet.</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- All Dishes Tab -->
+    <div id="all-dishes-tab" class="tab-content">
+        <div class="section-header">
+            <h2>All Dishes</h2>
+        </div>
+        
+        {% if all_dishes %}
+            <div class="dishes-grid">
+                {% for dish in all_dishes %}
+                <div class="dish-card">
+                    <img src="{{ url_for('static', filename='img/dishes/' + dish.image_path) }}" 
+                         alt="{{ dish.name }}" class="dish-image">
+                    <div class="dish-info">
+                        <div class="dish-header">
+                            <h3>{{ dish.name }}</h3>
+                            <span class="dish-type {{ 'veg' if dish.is_veg else 'non-veg' }}">
+                                {{ '🟢 Veg' if dish.is_veg else '🔴 Non-Veg' }}
+                            </span>
+                        </div>
+                        <p class="restaurant-name">by {{ dish.owner.restaurant_name }}</p>
+                        <p class="dish-description">{{ dish.description[:100] }}...</p>
+                        <div class="dish-meta">
+                            <span class="dish-price">₹{{ "%.2f"|format(dish.price) }}</span>
+                            <span class="stock-info">Stock: {{ dish.stock }}</span>
+                        </div>
+                        <div class="dish-actions">
+                            <form method="POST" action="{{ url_for('admin.delete_dish', dish_id=dish.id) }}" 
+                                  style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this dish?')">
+                                <button type="submit" class="btn btn-danger btn-small">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-data">
+                <p>No dishes available.</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- All Orders Tab -->
+    <div id="all-orders-tab" class="tab-content">
+        <div class="section-header">
+            <h2>All Orders</h2>
+        </div>
+        
+        {% if all_orders %}
+            <div class="orders-list">
+                {% for order in all_orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <h3>Order #{{ order.id }}</h3>
+                        <span class="order-date">{{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}</span>
+                        <span class="order-status status-{{ order.status }}">{{ order.status.title() }}</span>
+                    </div>
+                    
+                    <div class="order-customer">
+                        <p><strong>Customer:</strong> {{ order.customer.name }}</p>
+                        <p><strong>Email:</strong> {{ order.customer.email }}</p>
+                    </div>
+                    
+                    <div class="order-items">
+                        <h4>Items:</h4>
+                        {% for item in order.order_items %}
+                        <div class="order-item">
+                            <span class="item-name">{{ item.dish.name }}</span>
+                            <span class="item-restaurant">by {{ item.dish.owner.restaurant_name }}</span>
+                            <span class="item-quantity">Qty: {{ item.quantity }}</span>
+                            <span class="item-price">₹{{ "%.2f"|format(item.price * item.quantity) }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="order-total">
+                        <strong>Total: ₹{{ "%.2f"|format(order.total_price) }}</strong>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-data">
+                <p>No orders placed yet.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function showTab(tabName) {
+    // Hide all tab contents
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(tab => tab.classList.remove('active'));
+    
+    // Remove active class from all tab buttons
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    tabBtns.forEach(btn => btn.classList.remove('active'));
+    
+    // Show selected tab content
+    document.getElementById(tabName + '-tab').classList.add('active');
+    
+    // Add active class to clicked button
+    event.target.classList.add('active');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Smart Food - Home{% endblock %}
+
+{% block content %}
+<div class="hero-section">
+    <div class="hero-content">
+        <h1>Welcome to Smart Food</h1>
+        <p>Delicious meals delivered to your doorstep</p>
+        <a href="{{ url_for('menu') }}" class="btn btn-primary">Order Now</a>
+    </div>
+</div>
+
+<div class="container">
+    <section class="featured-dishes">
+        <h2>Featured Dishes</h2>
+        <div class="dishes-grid">
+            {% for dish in dishes %}
+            <div class="dish-card">
+                <img src="{{ url_for('static', filename='img/dishes/' + dish.image_path) }}" 
+                     alt="{{ dish.name }}" class="dish-image">
+                <div class="dish-info">
+                    <div class="dish-header">
+                        <h3>{{ dish.name }}</h3>
+                        <span class="dish-type {{ 'veg' if dish.is_veg else 'non-veg' }}">
+                            {{ '🟢 Veg' if dish.is_veg else '�� Non-Veg' }}
+                        </span>
+                    </div>
+                    <p class="dish-description">{{ dish.description[:100] }}...</p>
+                    <div class="dish-footer">
+                        <span class="dish-price">₹{{ "%.2f"|format(dish.price) }}</span>
+                        <a href="{{ url_for('dish_detail', dish_id=dish.id) }}" class="btn btn-secondary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="features">
+        <h2>Why Choose Smart Food?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-clock"></i>
+                <h3>Fast Delivery</h3>
+                <p>Quick and reliable delivery to your location</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-leaf"></i>
+                <h3>Fresh Ingredients</h3>
+                <p>We use only the freshest ingredients in our dishes</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-star"></i>
+                <h3>Quality Food</h3>
+                <p>High-quality meals prepared by expert chefs</p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

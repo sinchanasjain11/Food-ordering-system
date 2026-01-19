@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login - Smart Food{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="auth-container">
+        <div class="auth-form">
+            <h2>Admin Login</h2>
+            
+            <form method="POST">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required class="form-input">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">Login</button>
+            </form>
+        </div>
+        
+        <div class="auth-info">
+            <h3>Admin Portal</h3>
+            <p>Administrative access to:</p>
+            <ul>
+                <li>Approve restaurant owners</li>
+                <li>Manage all dishes</li>
+                <li>View all orders</li>
+                <li>System administration</li>
+            </ul>
+            <div class="note">
+                <p><strong>Default Credentials:</strong><br>
+                Username: admin<br>
+                Password: admin123</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

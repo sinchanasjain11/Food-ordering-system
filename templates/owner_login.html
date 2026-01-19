@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Owner Login - Smart Food{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="auth-container">
+        <div class="auth-form">
+            <h2>Restaurant Owner Login</h2>
+            
+            <form method="POST">
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required class="form-input">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">Login</button>
+            </form>
+            
+            <div class="auth-links">
+                <p>Don't have an account? <a href="{{ url_for('auth.owner_register') }}">Register your restaurant</a></p>
+            </div>
+        </div>
+        
+        <div class="auth-info">
+            <h3>Restaurant Owner Portal</h3>
+            <p>Login to your owner account to:</p>
+            <ul>
+                <li>Manage your restaurant menu</li>
+                <li>Add new dishes</li>
+                <li>Update prices and stock</li>
+                <li>View customer orders</li>
+                <li>Track sales performance</li>
+            </ul>
+            <div class="note">
+                <p><strong>Note:</strong> Your account must be approved by admin before you can access the dashboard.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

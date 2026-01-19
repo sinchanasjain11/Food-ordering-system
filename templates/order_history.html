@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Order History - Smart Food{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Your Order History</h1>
+    
+    {% if orders %}
+        <div class="orders-list">
+            {% for order in orders %}
+            <div class="order-card">
+                <div class="order-header">
+                    <h3>Order #{{ order.id }}</h3>
+                    <span class="order-date">{{ order.created_at.strftime('%B %d, %Y at %I:%M %p') }}</span>
+                    <span class="order-status status-{{ order.status }}">{{ order.status.title() }}</span>
+                </div>
+                
+                <div class="order-items">
+                    {% for item in order.order_items %}
+                    <div class="order-item">
+                        <span class="item-name">{{ item.dish.name }}</span>
+                        <span class="item-restaurant">by {{ item.dish.owner.restaurant_name }}</span>
+                        <span class="item-quantity">Qty: {{ item.quantity }}</span>
+                        <span class="item-price">₹{{ "%.2f"|format(item.price * item.quantity) }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="order-footer">
+                    <div class="order-total">
+                        <strong>Total: ₹{{ "%.2f"|format(order.total_price) }}</strong>
+                    </div>
+                    <div class="order-actions">
+                        <a href="{{ url_for('customer.bill', order_id=order.id) }}" class="btn btn-secondary btn-small">View Bill</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-orders">
+            <i class="fas fa-receipt empty-icon"></i>
+            <h2>No orders yet</h2>
+            <p>You haven't placed any orders yet. Start exploring our menu!</p>
+            <a href="{{ url_for('menu') }}" class="btn btn-primary">Browse Menu</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

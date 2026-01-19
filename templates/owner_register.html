@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Owner Register - Smart Food{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="auth-container">
+        <div class="auth-form">
+            <h2>Restaurant Registration</h2>
+            
+            <form method="POST">
+                <div class="form-group">
+                    <label for="name">Owner Name:</label>
+                    <input type="text" id="name" name="name" required class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="restaurant_name">Restaurant Name:</label>
+                    <input type="text" id="restaurant_name" name="restaurant_name" required class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required class="form-input">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required class="form-input" minlength="6">
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm-password">Confirm Password:</label>
+                    <input type="password" id="confirm-password" name="confirm_password" required class="form-input" minlength="6">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">Register Restaurant</button>
+            </form>
+            
+            <div class="auth-links">
+                <p>Already have an account? <a href="{{ url_for('auth.owner_login') }}">Login here</a></p>
+            </div>
+        </div>
+        
+        <div class="auth-info">
+            <h3>Join Our Platform!</h3>
+            <p>Register your restaurant to:</p>
+            <ul>
+                <li>Reach more customers</li>
+                <li>Manage your menu online</li>
+                <li>Receive orders digitally</li>
+                <li>Track your business growth</li>
+                <li>Increase your revenue</li>
+            </ul>
+            <div class="note">
+                <p><strong>Important:</strong> After registration, your account will be reviewed by our admin team. You'll receive access once approved.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    
+    if (password !== confirmPassword) {
+        e.preventDefault();
+        alert('Passwords do not match!');
+    }
+});
+</script>
+{% endblock %}

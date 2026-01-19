@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Menu - Smart Food{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="menu-header">
+        <h1>Our Menu</h1>
+        
+        <div class="menu-filters">
+            <form method="GET" class="filter-form">
+                <div class="search-box">
+                    <input type="text" name="search" placeholder="Search dishes..." 
+                           value="{{ search }}" class="search-input">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                
+                <div class="filter-buttons">
+                    <a href="{{ url_for('menu', filter='all', search=search) }}" 
+                       class="filter-btn {{ 'active' if filter_type == 'all' else '' }}">All</a>
+                    <a href="{{ url_for('menu', filter='veg', search=search) }}" 
+                       class="filter-btn {{ 'active' if filter_type == 'veg' else '' }}">🟢 Veg</a>
+                    <a href="{{ url_for('menu', filter='non-veg', search=search) }}" 
+                       class="filter-btn {{ 'active' if filter_type == 'non-veg' else '' }}">🔴 Non-Veg</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="dishes-grid">
+        {% for dish in dishes %}
+        <div class="dish-card">
+            <img src="{{ url_for('static', filename='img/dishes/' + dish.image_path) }}" 
+                 alt="{{ dish.name }}" class="dish-image">
+            <div class="dish-info">
+                <div class="dish-header">
+                    <h3>{{ dish.name }}</h3>
+                    <span class="dish-type {{ 'veg' if dish.is_veg else 'non-veg' }}">
+                        {{ '🟢 Veg' if dish.is_veg else '🔴 Non-Veg' }}
+                    </span>
+                </div>
+                <p class="dish-description">{{ dish.description[:100] }}...</p>
+                <p class="restaurant-name">by {{ dish.owner.restaurant_name }}</p>
+                <div class="dish-footer">
+                    <span class="dish-price">₹{{ "%.2f"|format(dish.price) }}</span>
+                    <span class="stock-info">Stock: {{ dish.stock }}</span>
+                </div>
+                <div class="dish-actions">
+                    <a href="{{ url_for('dish_detail', dish_id=dish.id) }}" class="btn btn-secondary">View Details</a>
+                    {% if current_user.is_authenticated and session.get('user_type') == 'customer' %}
+                        {% if dish.stock > 0 %}
+                            <button onclick="addToCart({{ dish.id }})" class="btn btn-primary">Add to Cart</button>
+                        {% else %}
+                            <button class="btn btn-disabled" disabled>Out of Stock</button>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="no-dishes">
+            <p>No dishes found matching your criteria.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
